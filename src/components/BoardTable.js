@@ -8,7 +8,7 @@ import {
 import React from 'react';
 
 const BoardTable = ({ data }) => {
-	if (!data) return null;
+	if (!data || data.length === 0) return null;
 	return (
 		<Table size="small">
 			<TableHead>
@@ -23,8 +23,8 @@ const BoardTable = ({ data }) => {
 				{data.map((board, index) => (
 					<TableRow key={index}>
 						<TableCell>{board.name}</TableCell>
-						<TableCell>{board.playerX.username}</TableCell>
-						<TableCell>{board.playerO.username}</TableCell>
+						<TableCell>{board.playerX?.username}</TableCell>
+						<TableCell>{board.playerO?.username}</TableCell>
 						<TableCell>{board.winner}</TableCell>
 					</TableRow>
 				))}

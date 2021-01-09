@@ -25,10 +25,12 @@ import {
 	MenuItems,
 	Title,
 	UserTable,
+	AlertDialog,
+	SearchInput,
 } from '../components';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/auth';
-import { getUsers } from '../store/users';
+import { deleteUser, getUsers, unBanUser } from '../store/users';
 import { removeMenu, setSelectedMenu } from '../store/config';
 import { getBoards } from '../store/boards';
 
@@ -113,14 +115,25 @@ const useStyles = makeStyles((theme) => ({
 	},
 	progress: {
 		margin: 'auto',
-	}
+	},
 }));
 
-const renderData = (users, boards, selectedMenu, boardLoading, userLoading, classes) => {
-	if (boardLoading && selectedMenu === 'Boards') return <CircularProgress className={classes.progress} />;
-	if (userLoading && selectedMenu === 'Users') return <CircularProgress className={classes.progress}/>;
+const renderData = (
+	users,
+	boards,
+	selectedMenu,
+	boardLoading,
+	userLoading,
+	classes,
+	handleModalOpen,
+	handleUnBanModalOpen
+) => {
+	if (boardLoading && selectedMenu === 'Boards')
+		return <CircularProgress className={classes.progress} />;
+	if (userLoading && selectedMenu === 'Users')
+		return <CircularProgress className={classes.progress} />;
 	return selectedMenu === 'Users' ? (
-		<UserTable data={users} />
+		<UserTable data={users} handleModalOpen={handleModalOpen} handleUnBanModalOpen={handleUnBanModalOpen} />
 	) : (
 		<BoardTable data={boards} />
 	);
@@ -129,6 +142,10 @@ const renderData = (users, boards, selectedMenu, boardLoading, userLoading, clas
 export default function Dashboard() {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(true);
+	const [modalOpen, setModalOpen] = React.useState(false);
+	const [userToDelete, setUserToDelete] = React.useState('');
+	const [unBanModalOpen, setUnBanModalOpen] = React.useState(false);
+	const [userToUnBan, setUserToUnBan] = React.useState('');
 	const dispatch = useDispatch();
 	const { users, loading: userLoading } = useSelector((state) => state.users);
 	const { selectedMenu } = useSelector((state) => state.config);
@@ -142,8 +159,36 @@ export default function Dashboard() {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
+
+
 	const handleLogout = () => {
 		dispatch(logout());
+	};
+
+
+	const handleModalOpen = (id) => {
+		setModalOpen(true);
+		setUserToDelete(id);
+	};
+	const handleModalClose = () => {
+		setModalOpen(false);
+	};
+	const handleDeleteUser = () => {
+		setModalOpen(false);
+		dispatch(deleteUser(userToDelete));
+	};
+
+
+	const handleUnBanModalOpen = (id) => {
+		setUnBanModalOpen(true);
+		setUserToUnBan(id);
+	};
+	const handleUnBanModalClose = () => {
+		setUnBanModalOpen(false);
+	};
+	const handleUnBanUser = () => {
+		setUnBanModalOpen(false);
+		dispatch(unBanUser(userToUnBan));
 	};
 
 	const handleUsersMenuClick = (e) => {
@@ -158,6 +203,11 @@ export default function Dashboard() {
 		if (selectedMenu !== 'Boards') {
 			dispatch(setSelectedMenu('Boards'));
 		}
+	};
+
+	const handleSearch = (e,filter,query) => {
+		e.preventDefault();
+		dispatch(getUsers(filter,query));
 	};
 
 	React.useEffect(() => {
@@ -236,6 +286,7 @@ export default function Dashboard() {
 				<Container maxWidth="lg" className={classes.container}>
 					<Grid container spacing={3}>
 						<Grid item xs={12} md={12} lg={12}>
+							{selectedMenu === 'Users' && <SearchInput handleSearch={handleSearch}/>}
 							<Paper className={classes.paper}>
 								<Title>{selectedMenu}</Title>
 								{renderData(
@@ -244,8 +295,26 @@ export default function Dashboard() {
 									selectedMenu,
 									boardLoading,
 									userLoading,
-									classes
+									classes,
+									handleModalOpen,
+									handleUnBanModalOpen
 								)}
+								<AlertDialog
+									title="Ban user"
+									open={modalOpen}
+									handleClose={handleModalClose}
+									handleAgree={handleDeleteUser}
+								>
+									Do you want to ban this user?
+								</AlertDialog>
+								<AlertDialog
+									title="Unban user"
+									open={unBanModalOpen}
+									handleClose={handleUnBanModalClose}
+									handleAgree={handleUnBanUser}
+								>
+									Do you want to unban this user?
+								</AlertDialog>
 							</Paper>
 						</Grid>
 					</Grid>
