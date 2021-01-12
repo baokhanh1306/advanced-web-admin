@@ -10,10 +10,10 @@ import {
 	TableRow,
 	Tooltip,
 } from '@material-ui/core';
-import { Delete, Redo } from '@material-ui/icons';
+import { Delete, Details, People, Redo } from '@material-ui/icons';
 import React from 'react';
 
-const UserTable = ({ data, handleModalOpen, handleUnBanModalOpen }) => {
+const UserTable = ({ data, handleModalOpen, handleUnBanModalOpen, handleDetailClick }) => {
 	if (!data) return null;
 	return (
 		<Table size="small">
@@ -23,7 +23,7 @@ const UserTable = ({ data, handleModalOpen, handleUnBanModalOpen }) => {
 					<TableCell>Email</TableCell>
 					<TableCell align="center">Games</TableCell>
 					<TableCell align="center">Cups</TableCell>
-					<TableCell align="center">Edit</TableCell>
+					<TableCell align="center">Actions</TableCell>
 					<TableCell align="center">Status</TableCell>
 				</TableRow>
 			</TableHead>
@@ -54,6 +54,11 @@ const UserTable = ({ data, handleModalOpen, handleUnBanModalOpen }) => {
 									</IconButton>
 								</Tooltip>
 							)}
+							<Tooltip title="Detail">
+								<IconButton aria-label="Detail" onClick={() => handleDetailClick(user._id)}>
+									<People />
+								</IconButton>
+							</Tooltip>
 						</TableCell>
 						<TableCell align="center">{user.banned && 'Banned'}</TableCell>
 					</TableRow>

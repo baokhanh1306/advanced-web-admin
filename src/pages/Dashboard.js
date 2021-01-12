@@ -33,6 +33,8 @@ import { logout } from '../store/auth';
 import { deleteUser, getUsers, unBanUser } from '../store/users';
 import { removeMenu, setSelectedMenu } from '../store/config';
 import { getBoards } from '../store/boards';
+import history from '../utils/history';
+import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -73,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	title: {
 		flexGrow: 1,
+		color: 'white',
+        fontSize: '24px',
+        textDecoration: 'none',
 	},
 	drawerPaper: {
 		position: 'relative',
@@ -126,14 +131,15 @@ const renderData = (
 	userLoading,
 	classes,
 	handleModalOpen,
-	handleUnBanModalOpen
+	handleUnBanModalOpen,
+	handleDetailClick
 ) => {
 	if (boardLoading && selectedMenu === 'Boards')
 		return <CircularProgress className={classes.progress} />;
 	if (userLoading && selectedMenu === 'Users')
 		return <CircularProgress className={classes.progress} />;
 	return selectedMenu === 'Users' ? (
-		<UserTable data={users} handleModalOpen={handleModalOpen} handleUnBanModalOpen={handleUnBanModalOpen} />
+		<UserTable data={users} handleModalOpen={handleModalOpen} handleUnBanModalOpen={handleUnBanModalOpen} handleDetailClick={handleDetailClick}/>
 	) : (
 		<BoardTable data={boards} />
 	);
@@ -210,6 +216,10 @@ export default function Dashboard() {
 		dispatch(getUsers(filter,query));
 	};
 
+	const handleDetailClick = (id) => {
+		history.push(`/user/${id}`);
+	};
+
 	React.useEffect(() => {
 		dispatch(getUsers());
 		dispatch(setSelectedMenu('Users'));
@@ -246,15 +256,9 @@ export default function Dashboard() {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography
-						component="h1"
-						variant="h6"
-						color="inherit"
-						noWrap
-						className={classes.title}
-					>
+					<Link className={classes.title} to="/dashboard">
 						Dashboard
-					</Typography>
+					</Link>
 					<IconButton color="inherit" onClick={handleLogout}>
 						<ExitToApp />
 					</IconButton>
@@ -297,7 +301,8 @@ export default function Dashboard() {
 									userLoading,
 									classes,
 									handleModalOpen,
-									handleUnBanModalOpen
+									handleUnBanModalOpen,
+									handleDetailClick
 								)}
 								<AlertDialog
 									title="Ban user"

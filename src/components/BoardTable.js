@@ -25,7 +25,7 @@ const BoardTable = ({ data }) => {
 						<TableCell>{board.name}</TableCell>
 						<TableCell>{board.playerX?.username}</TableCell>
 						<TableCell>{board.playerO?.username}</TableCell>
-						<TableCell>{board.winner}</TableCell>
+						<TableCell>{board.winner === -1 ? board.playerX?.username : board.playerO?.username}</TableCell>
 					</TableRow>
 				))}
 			</TableBody>
