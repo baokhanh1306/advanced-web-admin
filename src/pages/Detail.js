@@ -5,7 +5,7 @@ import {
 	Grid,
 	IconButton,
 	makeStyles,
-    Paper,
+	Paper,
 	Toolbar,
 	Typography,
 } from '@material-ui/core';
@@ -17,6 +17,7 @@ import { BoardTable, CopyRight, Title, UserTable } from '../components';
 import { logout } from '../store/auth';
 import { getUser } from '../store/user';
 import { Link } from 'react-router-dom';
+import UserDetail from '../components/UserDetail';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -26,10 +27,10 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: theme.spacing(2),
 	},
 	title: {
-        flexGrow: 1,
-        color: 'white',
-        fontSize: '24px',
-        textDecoration: 'none',
+		flexGrow: 1,
+		color: 'white',
+		fontSize: '24px',
+		textDecoration: 'none',
 	},
 	content: {
 		flexGrow: 1,
@@ -51,10 +52,9 @@ const useStyles = makeStyles((theme) => ({
 const Detail = () => {
 	const params = useParams();
 	const classes = useStyles();
-    
-    const dispatch = useDispatch();
-    const { user } = useSelector(state => state.user);
 
+	const dispatch = useDispatch();
+	const { user } = useSelector((state) => state.user);
 
 	React.useEffect(() => {
 		dispatch(getUser(params.id));
@@ -80,16 +80,13 @@ const Detail = () => {
 			<main className={classes.content}>
 				<Container maxWidth="lg" className={classes.container}>
 					<Grid container spacing={3}>
-                    <Grid item xs={12} md={12} lg={12}>
-							<Paper className={classes.paper}>
-								<Title>User</Title>
-                            {user&&<UserTable data={[user]} />}
-							</Paper>
+						<Grid item xs={12} md={12} lg={12}>
+							{user && <UserDetail user={user} />}
 						</Grid>
 						<Grid item xs={12} md={12} lg={12}>
 							<Paper className={classes.paper}>
 								<Title>History</Title>
-                             <BoardTable data={user?.history} />
+								<BoardTable data={user?.history} />
 							</Paper>
 						</Grid>
 					</Grid>

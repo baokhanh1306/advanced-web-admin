@@ -8,6 +8,7 @@ import {
 	CircularProgress,
 	Container,
 	CssBaseline,
+	Dialog,
 	Divider,
 	Drawer,
 	Grid,
@@ -35,6 +36,8 @@ import { removeMenu, setSelectedMenu } from '../store/config';
 import { getBoards } from '../store/boards';
 import history from '../utils/history';
 import { Link } from 'react-router-dom';
+import Chat from '../components/Chat';
+import ChatDialog from '../components/ChatDialog';
 
 const drawerWidth = 240;
 
@@ -132,7 +135,8 @@ const renderData = (
 	classes,
 	handleModalOpen,
 	handleUnBanModalOpen,
-	handleDetailClick
+	handleDetailClick,
+	handleConversationOpen
 ) => {
 	if (boardLoading && selectedMenu === 'Boards')
 		return <CircularProgress className={classes.progress} />;
@@ -141,7 +145,7 @@ const renderData = (
 	return selectedMenu === 'Users' ? (
 		<UserTable data={users} handleModalOpen={handleModalOpen} handleUnBanModalOpen={handleUnBanModalOpen} handleDetailClick={handleDetailClick}/>
 	) : (
-		<BoardTable data={boards} />
+		<BoardTable data={boards} handleConversationOpen={handleConversationOpen}/>
 	);
 };
 
@@ -152,6 +156,8 @@ export default function Dashboard() {
 	const [userToDelete, setUserToDelete] = React.useState('');
 	const [unBanModalOpen, setUnBanModalOpen] = React.useState(false);
 	const [userToUnBan, setUserToUnBan] = React.useState('');
+	const [conversationOpen, setConversationOpen] = React.useState(false);
+	const [conversation, setConversation] = React.useState([]);
 	const dispatch = useDispatch();
 	const { users, loading: userLoading } = useSelector((state) => state.users);
 	const { selectedMenu } = useSelector((state) => state.config);
@@ -218,6 +224,14 @@ export default function Dashboard() {
 
 	const handleDetailClick = (id) => {
 		history.push(`/user/${id}`);
+	};
+
+	const handleConversationClose = () => {
+		setConversationOpen(false);
+	};
+	const handleConversationOpen = (conversation) => {
+		setConversation(conversation);
+		setConversationOpen(true);
 	};
 
 	React.useEffect(() => {
@@ -302,7 +316,8 @@ export default function Dashboard() {
 									classes,
 									handleModalOpen,
 									handleUnBanModalOpen,
-									handleDetailClick
+									handleDetailClick,
+									handleConversationOpen
 								)}
 								<AlertDialog
 									title="Ban user"
@@ -320,6 +335,9 @@ export default function Dashboard() {
 								>
 									Do you want to unban this user?
 								</AlertDialog>
+								<ChatDialog open={conversationOpen} handleClose={handleConversationClose}>
+									<Chat conversation={conversation} />
+								</ChatDialog>
 							</Paper>
 						</Grid>
 					</Grid>
