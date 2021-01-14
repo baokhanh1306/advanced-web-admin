@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PROD_API : process.env.REACT_APP_DEV_API;
+const BASE_URL = 'https://polar-river-87898.herokuapp.com/api';
 
 
 const axiosClient = axios.create({
