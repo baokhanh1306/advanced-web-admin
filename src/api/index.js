@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://polar-river-87898.herokuapp.com/api';
+const BASE_URL = 'http://api.kyle-pham.me/api';
 
 
 const axiosClient = axios.create({
